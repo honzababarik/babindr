@@ -37,6 +37,10 @@ body {
   margin-bottom: 40px;
 }
 
+.full-width {
+  width: 100%;
+}
+
 .details {
   font-weight: 600;
   font-size: 1.2rem;
@@ -187,10 +191,10 @@ table tr td {
   align-items: center;
   max-width: var(--screen-width);
   margin: 0 auto;
+  padding: 0px 15px;
 }
 .game-screen {
   max-width: 100%;
-  width: 100vw;
   justify-content: space-between;
   height: calc(100vh - var(--nav-height) - 50px);
 }
@@ -235,7 +239,6 @@ table tr td {
   border: 1px solid var(--border-color);
   box-shadow: none;
   border-radius: 15px;
-  width: inherit;
   display: flex;
   align-items: center;
   padding: 4px 10px;
@@ -448,9 +451,32 @@ table tr td {
   border-bottom: 2px solid var(--border-color);
 }
 
+.tabs {
+  display: flex;
+  background-color: white;
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+.tab {
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 50px;
+  border-bottom: 2px solid var(--border-color);
+}
+.tab.active {
+  border-bottom-color: var(--theme-color);
+}
+
 @media only screen and (max-width: 768px) {
   .nav {
     height: var(--nav-mobile-height);
+    background-color: white;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 20px;
   }
   h1 {
     font-size: 2rem;
@@ -459,13 +485,12 @@ table tr td {
     font-size: 0.9rem;
   }
   #app, .screen {
-    min-height: calc(100vh - var(--nav-mobile-height))
-  }
-  .game-screen {
-    height: calc(100vh - var(--nav-mobile-height) - 20px)
+    min-height: calc(100vh - var(--nav-mobile-height) - 40px);
+    max-width: 100%;
   }
   .play-header {
     padding: 10px;
+    max-width: 100%;
   }
   .dropdown button {
     font-size: 1rem;
@@ -490,24 +515,4 @@ table tr td {
   .progress {
     margin-bottom: 20px;
   }
-}
-
-.tabs {
-  display: flex;
-  background-color: white;
-  border-top-left-radius: var(--border-radius);
-  border-top-right-radius: var(--border-radius);
-}
-.tab {
-  cursor: pointer;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  height: 50px;
-  border-bottom: 2px solid var(--border-color);
-}
-.tab.active {
-  border-bottom-color: var(--theme-color);
 }

@@ -126,6 +126,7 @@
           <div class="dropdown" :class="{'active': isDropdownOpened}">
             <button @click="isDropdownOpened = !isDropdownOpened"><i class="far fa-ellipsis-v"></i></button>
             <div class="dropdown-menu">
+              <a @click="onClickSkipRest">Skip Rest</a>
               <a @click="onClickSaveGame">Save Game</a>
               <a @click="onClickExitGame">Exit Game</a>
             </div>
@@ -169,7 +170,7 @@
       </div>
 
       <div class="screen" v-if="currentScreen === 'results'">
-        <div class="d-flex align-items justify-between mb-8">
+        <div class="d-flex full-width align-items justify-between mb-8">
           <h2>Game Results</h2>
           <a class="btn btn-xs btn-primary" @click="onClickBackToMenu">
             Try Again!
@@ -205,7 +206,7 @@
           Show Details <i class="far fa-chevron-down"></i>
         </a>
 
-        <div v-if="areDetailsShown">
+        <div class="full-width" v-if="areDetailsShown">
           <div class="tabs">
             <div class="tab" :class="{'active': currentTab === 0}" @click="currentTab = 0">Matches</div>
             <div class="tab" :class="{'active': currentTab === 1}" @click="currentTab = 1">Quick Matches</div>

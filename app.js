@@ -100,11 +100,13 @@
         this.goToScreen(SCREEN_NAME_MENU);
       },
       onClickSaveGame: function () {
+        this.isDropdownOpened = false;
         dvlt.storage.set(this.getGameStoreKey(this.game), this.game);
         dvlt.notify('Your game ' + this.game.id + ' was saved!', 'success')
         this.isDropdownOpened = false;
       },
       onClickExitGame: function () {
+        this.isDropdownOpened = false;
         if (confirm('Are you sure you want to exit game?')) {
           this.goToScreen(SCREEN_NAME_MENU);
         }
@@ -176,6 +178,7 @@
       nextPlayer: function () {
         this.game.currentPlayerIndex++;
         this.nextWord(0);
+        this.goToScreen(SCREEN_NAME_PLAYER_READY);
       },
       onRateWord: function (rating) {
         this.rateCurrentWord(rating);
@@ -184,7 +187,6 @@
         }
         else if (this.game.currentPlayerIndex < this.game.players.length - 1) {
           this.nextPlayer();
-          this.goToScreen(SCREEN_NAME_PLAYER_READY);
         }
         else {
           this.onGameCompleted();
@@ -203,15 +205,15 @@
             matches: 0
           },
         };
-        var playerCount = this.game.players.length;
-
-        for (var i = 0; i < Object.keys(game.ratings).length; i++) {
+        var playerCount = game.players.length;
+        for (var i = 0; i < game.words.length; i++) {
           var wordRatings = game.ratings[i];
 
           var score = 0;
           var likes = 0;
           var dislikes = 0;
           var totalTime = 0;
+          var shouldSkipWord = false;
 
           for (var j = 0; j < Object.keys(wordRatings).length; j++) {
             if (!results.players[j]) {
@@ -223,6 +225,12 @@
             }
 
             var rating = wordRatings[j];
+            if (!rating) {
+              // One user rated but the other did not
+              shouldSkipWord = true;
+              continue;
+            }
+
             if (rating.score > 0) {
               results.players[j].likes++;
               likes++;
@@ -236,20 +244,40 @@
             score += rating.score;
           }
 
-          results.words[i] = {
-            score: score,
-            likes: likes,
-            dislikes: dislikes,
-            totalTime: totalTime,
-          };
+          if (!shouldSkipWord) {
+            results.words[i] = {
+              score: score,
+              likes: likes,
+              dislikes: dislikes,
+              totalTime: totalTime,
+            };
 
-          // If the score equals or is higher to the number of players rating
-          // = Means everyone rated at least 1
-          if (score === playerCount) {
-            results.general.matches++;
+            // If the score equals or is higher to the number of players rating
+            // = Means everyone rated at least 1
+            if (score === playerCount) {
+              results.general.matches++;
+            }
           }
         }
         game.results = results;
+      },
+      onClickSkipRest: function () {
+        this.isDropdownOpened = false;
+        var hasNextPlayer = this.game.currentPlayerIndex < this.game.players.length - 1;
+        var confirmationMessage = 'Are you sure you want to skip the remaining words and jump to the next player?';
+        if (!hasNextPlayer) {
+          confirmationMessage = 'Are you sure you want to skip the remaining words and go to results?';
+        }
+
+        if (confirm(confirmationMessage)) {
+          this.game.words.splice(this.game.currentWordIndex + 1);
+          if (hasNextPlayer) {
+            this.nextPlayer();
+          }
+          else {
+            this.onGameCompleted();
+          }
+        }
       },
       getPlayerLikesRatio: function (player) {
         return dvlt.formatter.toPerc(player.likes / (player.likes + player.dislikes));
@@ -278,14 +306,19 @@
       },
       getGameProgress: function (game) {
         // TODO on navigation, push states
-        var totalWords = game.players.length * game.words.length;
-        var currentWords = (game.currentWordIndex + 1) + (game.currentPlayerIndex * game.words.length);
+        var totalGameWords = this.getTotalWords(game);
+        var totalWords = game.players.length * totalGameWords;
+        var currentWords = (game.currentWordIndex + 1) + (game.currentPlayerIndex * totalGameWords);
         return dvlt.formatter.toPerc(currentWords / totalWords);
       },
       isGameCompleted: function (game) {
-        var totalWords = game.players.length * game.words.length;
-        var currentWords = (game.currentWordIndex + 1) + (game.currentPlayerIndex * game.words.length);
+        var totalGameWords = this.getTotalWords(game);
+        var totalWords = game.players.length * totalGameWords;
+        var currentWords = (game.currentWordIndex + 1) + (game.currentPlayerIndex * totalGameWords);
         return totalWords === currentWords;
+      },
+      getTotalWords: function (game) {
+        return game.words.length;
       },
     },
     computed: {
@@ -310,7 +343,7 @@
         return matches;
       },
       progressText: function () {
-        return '[' + (this.game.currentWordIndex + 1) + ' / ' + this.game.words.length + ']';
+        return '[' + (this.game.currentWordIndex + 1) + ' / ' + this.getTotalWords(this.game) + ']';
       },
       playerProgress: function () {
         return Math.round(this.game.currentWordIndex / this.game.words.length * 100);
