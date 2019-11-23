@@ -15,7 +15,7 @@
 
     <div id="app" v-cloak>
 
-      <div class="screen justify-center items-center" v-if="currentScreen === 'menu'">
+      <div class="screen screen-center" v-if="currentScreen === 'menu'">
         <a class="btn btn-primary mb-4" @click="onClickStartGame">
           Start Game
         </a>
@@ -111,7 +111,7 @@
         </a>
       </div>
 
-      <div class="screen text-center" v-if="currentScreen === 'player-ready'">
+      <div class="screen screen-center" v-if="currentScreen === 'player-ready'">
         <h3 class="mb-2">Hi {{ currentPlayerName }}!</h3>
         <p>The game is about to start...</p>
 

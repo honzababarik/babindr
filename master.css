@@ -184,15 +184,19 @@ table tr td {
 .screen {
   display: flex;
   flex-direction: column;
+  align-items: center;
   max-width: var(--screen-width);
   margin: 0 auto;
 }
 .game-screen {
   max-width: 100%;
   width: 100vw;
-  align-items: center;
   justify-content: space-between;
   height: calc(100vh - var(--nav-height) - 50px);
+}
+.screen-center {
+  align-items: center;
+  justify-content: center;
 }
 
 .btn {
