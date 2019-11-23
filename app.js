@@ -56,8 +56,8 @@
         }
 
         this.isLoading = true;
-        dvlt.ajax.getJSON(this.game.nameSetUrl, function (response) {
-          console.log(response);
+        dvlt.ajax.getJSON(this.game.nameSetUrl, function (statusCode, response) {
+          console.log(statusCode, response);
           // TODO this.game.words =
           app.isLoading = false;
           app.goToScreen(SCREEN_NAME_GAME);
