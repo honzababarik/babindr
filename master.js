@@ -1,16 +1,38 @@
 window.dvlt = {
+  data: {
+    maleEmojis: ["👼", "🦸‍♂️", "🦹‍♂️", "👮‍♂️", "👷‍♂️", "💂‍♂️", "🕵️‍♂️", "👨‍⚕️", "👨‍🌾", "👨‍🍳", "👨‍🎓", "👨‍🎤", "👨‍🏫", "👨‍🏭", "👨‍💻", "👨‍💼", "👨‍🔧", "👨‍🔬", "👨‍🎨", "👨‍🚒", "👨‍✈️", "👨‍🚀", "👨‍⚖️", "🤵", "🤴", "🎅", "🧙‍♂️", "🧝‍♂️", "🧛‍♂️", "🧟‍♂️", "🧞‍♂️", "🧜‍♂️", "🧚‍♂️"],
+    femaleEmojis: ["👼", "🦸‍♀️", "🦹‍♀️", "👮‍♀️", "👷‍♀️", "💂‍♀️", "🕵️‍♀️", "👩‍⚕️", "👩‍🌾", "👩‍🍳", "👩‍🎓", "👩‍🎤", "👩‍🏫", "👩‍🏭", "👩‍💻", "👩‍💼", "👩‍🔧", "👩‍🔬", "👩‍🎨", "👩‍🚒", "👩‍✈️", "👩‍🚀", "👩‍⚖️", "👰", "👸", "🤶", "🧙‍♀️", "🧝‍♀️", "🧛‍♀️", "🧟‍♀️", "🧞‍♀️", "🧜‍♀️", "🧚‍♀️"],
+  },
+  clock: {
+    now: function () {
+      return new Date().getTime();
+    }
+  },
+  formatter: {
+    toPerc: function (number) {
+      return Math.floor(number * 100) + '%';
+    }
+  },
   storage: {
     set: function (key, value) {
-      // TODO
+      return localStorage.setItem(key, JSON.stringify(value));
     },
     delete: function (key) {
-      // TODO
+      return localStorage.removeItem(key);
     },
-    getAll: function () {
-      // TODO
+    getAll: function (prefix) {
+      var values = [];
+      var keys = Object.keys(localStorage);
+      for (var i = 0; i < keys.length; i++) {
+        if (!prefix || keys[i].startsWith(prefix)) {
+          values.push(dvlt.storage.get(keys[i]));
+        }
+      }
+      return values;
     },
     get: function (key) {
-      // TODO
+      var item = localStorage.getItem(key);
+      return JSON.parse(item);
     }
   },
   notify: function (text, type, options) {
@@ -26,6 +48,19 @@ window.dvlt = {
   utils: {
     random: function (maxNumber) {
       return Math.floor(Math.random() * maxNumber);
+    },
+    randomMaleEmoji: function () {
+      return dvlt.data.maleEmojis[dvlt.utils.random(dvlt.data.maleEmojis.length - 1)];
+    },
+    randomFemaleEmoji: function () {
+      return dvlt.data.femaleEmojis[dvlt.utils.random(dvlt.data.femaleEmojis.length - 1)];
+    },
+    randomEmoji: function () {
+      var emojis = dvlt.data.maleEmojis.concat(dvlt.data.femaleEmojis);
+      return emojis[dvlt.utils.random(emojis.length - 1)];
+    },
+    isMobile: function () {
+      return window.innerWidth <= 768;
     },
   },
   string: {

@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Babindr - Baby Names Game</title>
+    <title>Babindr - Baby Names Swiper</title>
     <link rel="stylesheet" type="text/css" href="master.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css">
     <script src="https://kit.fontawesome.com/d7ba6c8625.js" crossorigin="anonymous"></script>
@@ -9,7 +9,7 @@
   </head>
   <body>
     <div class="nav">
-      <h1 class="mb-1">👶 Babinder</h1>
+      <h1>👶 Babinder</h1>
     </div>
 
     <div id="app" v-cloak>
@@ -18,23 +18,39 @@
         <a class="btn btn-primary mb-4" @click="onClickStartGame">
           Start Game
         </a>
-        <a class="btn btn-primary" @click="onClickLoadGame">
+        <a class="btn btn-primary" @click="onClickLoadGames">
           Load Previous Game
         </a>
       </div>
 
       <div class="screen items-center" v-if="currentScreen === 'load-game'">
-        <h2>Load Game</h2>
+        <h2 class="mb-2">Load Game</h2>
         <hr>
 
-        <div v-for="saveGame in savedGames">
-           TODO NAME {{ saveGame.nameSetUrl }}
-           TODO DELETE
+        <div
+          class="save-game" :class="{'active': (game && game.id === saveGame.id)}"
+          v-bind:key="saveGame.id" v-for="(saveGame, index) in savedGames"
+          @click="onClickSavedGame(saveGame)">
+          <div class="text mb-1">{{ getGameName(saveGame) }}</div>
+          <div class="set mb-2">{{ saveGame.nameSet.name }}</div>
+          <div class="d-flex items-center justify-between">
+            <div>
+              <span class="emoji">{{ saveGame.currentEmoji }}</span>
+              <span class="progress">{{ getGameProgress(saveGame) }}</span>
+            </div>
+            <a @click="onClickDeleteSaveGame(index, $event)">
+              <i class="fas fa-trash"></i>
+            </a>
+          </div>
         </div>
+
         <p class="text-center my-4" v-if="savedGames.length === 0">
           You have no previous games in this browser.
         </p>
 
+        <a class="btn btn-primary mb-4" @click="onClickLoadGame" v-if="game">
+          Load Game
+        </a>
         <a class="btn btn-default mb-4" @click="onClickBackToMenu">
           Back to Menu
         </a>
@@ -43,17 +59,17 @@
       <div class="screen items-center" v-if="currentScreen === 'game-settings'">
         <h2 class="mb-8">Game Settings</h2>
 
-        <h3>Name Set</h3>
+        <h3 class="mb-2">Name Set</h3>
         <div class="form-group form-group-full">
           <div class="form-control">
-            <select v-model="game.nameSetUrl">
-              <option v-for="nameSet in nameSets" :value="nameSet.url">{{ nameSet.name }}</option>
+            <select v-model="nameSetIndex">
+              <option v-for="(nameSet, index) in nameSets" :value="index">{{ nameSet.name }}</option>
             </select>
           </div>
         </div>
         <hr>
 
-        <h3>Players</h3>
+        <h3 class="mb-2">Players</h3>
         <div class="form-group form-group-full mb-2" v-for="(player, index) in game.players">
           <div class="form-control">
             <input type="text" :value="player">
@@ -65,21 +81,142 @@
         </a>
         <hr>
 
-        <h3>Last Name (Optional)</h3>
+        <h3 class="mb-2">Last Name (Optional)</h3>
         <div class="form-group form-group-full mb-2">
           <div class="form-control">
-            <input type="text" :value="game.lastName">
+            <input type="text" v-model="game.lastName">
+          </div>
+        </div>
+        <hr>
+
+        <h3 class="mb-2">Gender (Optional)</h3>
+        <div class="selector">
+          <div class="selector-item" :class="{'color-boy': game.gender === 'M'}" @click="onClickSelectGender('M')">
+            <i class="fas fa-mars"></i>
+          </div>
+          <div class="selector-item" :class="{'color-girl': game.gender === 'F'}" @click="onClickSelectGender('F')">
+            <i class="fas fa-venus"></i>
+          </div>
+          <div class="selector-item" :class="{'color-neutral': game.gender === null}" @click="onClickSelectGender(null)">
+            <i class="fas fa-ban"></i>
           </div>
         </div>
 
-        <a class="btn btn-primary mt-8" @click="onClickPlay">
+        <a class="btn btn-primary my-8" @click="onClickPlay">
           <i class="fas fa-play mr-2"></i> Play
         </a>
-
+        <a class="btn btn-default mb-4" @click="onClickBackToMenu">
+          Back to Menu
+        </a>
       </div>
 
-      <div class="screen" v-if="currentScreen === 'game'">
-        <h2>Player: {{ game.players[game.currentPlayerIndex] }}</h2>
+      <div class="screen text-center" v-if="currentScreen === 'player-ready'">
+        <h3 class="mb-2">Hi {{ currentPlayerName }}!</h3>
+        <p>The game is about to start...</p>
+
+        <a class="btn btn-primary mt-8" @click="onClickPlayerReady">
+          <i class="fas fa-play mr-2"></i> I'm Ready!
+        </a>
+      </div>
+
+      <div class="screen game-screen" v-if="currentScreen === 'game'">
+        <div class="play-header d-flex items-center justify-between">
+          <h3>Player: {{ currentPlayerName }}</h3>
+          <div class="dropdown" :class="{'active': isDropdownOpened}">
+            <button @click="isDropdownOpened = !isDropdownOpened"><i class="far fa-ellipsis-v"></i></button>
+            <div class="dropdown-menu">
+              <a @click="onClickSaveGame">Save Game</a>
+              <a @click="onClickExitGame">Exit Game</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="play-area">
+
+          <div class="play play-down" :class="{'active': isHoldingDown}" @click="onClickRateDown">
+            <i class="fal fa-thumbs-down"></i>
+            <div class="text">Meh</div>
+            <div class="key">[Shortcut: Arrow Down]</div>
+          </div>
+          <div class="card">
+            <span class="emoji" v-html="game.currentEmoji"></span>
+            <div class="first-name">{{ currentName }}</div>
+            <div class="last-name" v-if="game.lastName">{{ game.lastName }}</div>
+          </div>
+          <div class="play play-up" :class="{'active': isHoldingUp}" @click="onClickRateUp">
+            <i class="fal fa-thumbs-up"></i>
+            <div class="text">Awesome!</div>
+            <div class="key">[Shortcut: Arrow Up]</div>
+          </div>
+
+          <div class="play-mobile">
+            <div class="play-down" :class="{'active': isHoldingDown}" @click="onClickRateDown">
+              <i class="fal fa-thumbs-down"></i>
+            </div>
+            <div class="play-up" :class="{'active': isHoldingUp}" @click="onClickRateUp">
+              <i class="fal fa-thumbs-up"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="progress">
+          <div class="bar mb-2">
+            <div :style="progressBarStyle"></div>
+          </div>
+          <div class="text">{{ progressText }}</div>
+        </div>
+      </div>
+
+      <div class="screen" v-if="currentScreen === 'results'">
+        <div class="d-flex align-items justify-between mb-8">
+          <h2>Game Results</h2>
+          <a class="btn btn-xs btn-primary" @click="onClickBackToMenu">
+            Try Again!
+          </a>
+        </div>
+
+        <table class="mb-4">
+          <thead>
+            <tr>
+              <th class="text-left">Player</th>
+              <th>Likes</th>
+              <th>Dislikes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(player, index) in game.results.players">
+              <td class="text-left">{{ game.players[index] }}</td>
+              <td class="text-center color-success">
+                {{ player.likes }}
+                <span>[{{ getPlayerLikesRatio(player) }}]</span>
+              </td>
+              <td class="text-center color-danger">
+                {{ player.dislikes }}
+                <span>[{{ getPlayerDislikesRatio(player) }}]</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h1 class="total">Total Matches: {{ game.results.general.matches }}</h1>
+
+        <a class="details" @click="areDetailsShown = true" v-if="!areDetailsShown && game.results.general.matches > 0">
+          Show Details <i class="far fa-chevron-down"></i>
+        </a>
+
+        <div v-if="areDetailsShown">
+          <div class="tabs">
+            <div class="tab" :class="{'active': currentTab === 0}" @click="currentTab = 0">Matches</div>
+            <div class="tab" :class="{'active': currentTab === 1}" @click="currentTab = 1">Quick Matches</div>
+          </div>
+
+          <div class="matches">
+            <div v-for="match in sortedMatches">
+              {{ match.word }}
+              <span v-if="game.lastName">{{ game.lastName }}</span>
+            </div>
+          </div>
+        </div>
 
       </div>
 
