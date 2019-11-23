@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Babindr - Baby Names Game</title>
+    <link rel="stylesheet" type="text/css" href="master.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css">
+    <script src="https://kit.fontawesome.com/d7ba6c8625.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div class="nav">
+      <h1 class="mb-1">👶 Babinder</h1>
+    </div>
+
+    <div id="app" v-cloak>
+
+      <div class="screen justify-center items-center" v-if="currentScreen === 'menu'">
+        <a class="btn btn-primary mb-4" @click="onClickStartGame">
+          Start Game
+        </a>
+        <a class="btn btn-primary" @click="onClickLoadGame">
+          Load Previous Game
+        </a>
+      </div>
+
+      <div class="screen items-center" v-if="currentScreen === 'load-game'">
+        <h2>Load Game</h2>
+        <hr>
+
+        <div v-for="saveGame in savedGames">
+           TODO NAME {{ saveGame.nameSetUrl }}
+           TODO DELETE
+        </div>
+        <p class="text-center my-4" v-if="savedGames.length === 0">
+          You have no previous games in this browser.
+        </p>
+
+        <a class="btn btn-default mb-4" @click="onClickBackToMenu">
+          Back to Menu
+        </a>
+      </div>
+
+      <div class="screen items-center" v-if="currentScreen === 'game-settings'">
+        <h2 class="mb-8">Game Settings</h2>
+
+        <h3>Name Set</h3>
+        <div class="form-group form-group-full">
+          <div class="form-control">
+            <select v-model="game.nameSetUrl">
+              <option v-for="nameSet in nameSets" :value="nameSet.url">{{ nameSet.name }}</option>
+            </select>
+          </div>
+        </div>
+        <hr>
+
+        <h3>Players</h3>
+        <div class="form-group form-group-full mb-2" v-for="(player, index) in game.players">
+          <div class="form-control">
+            <input type="text" :value="player">
+            <i class="fas fa-times pointer" @click="onClickRemovePlayer(index)"></i>
+          </div>
+        </div>
+        <a class="btn btn-primary btn-sm" @click="onClickAddPlayer">
+          <i class="far fa-plus mr-2"></i> Add Player
+        </a>
+        <hr>
+
+        <h3>Last Name (Optional)</h3>
+        <div class="form-group form-group-full mb-2">
+          <div class="form-control">
+            <input type="text" :value="game.lastName">
+          </div>
+        </div>
+
+        <a class="btn btn-primary mt-8" @click="onClickPlay">
+          <i class="fas fa-play mr-2"></i> Play
+        </a>
+
+      </div>
+
+      <div class="screen" v-if="currentScreen === 'game'">
+        <h2>Player: {{ game.players[game.currentPlayerIndex] }}</h2>
+
+      </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="master.js"></script>
+    <script type="text/javascript" src="components.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+  </body>
+</html>
