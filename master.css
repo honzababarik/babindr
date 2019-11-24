@@ -263,6 +263,10 @@ table tr td {
   color: var(--text-color);
   font-size: 1rem;
 }
+.form-control select {
+  width: 100%;
+  text-overflow: ellipsis;
+}
 
 .progress {
   text-align: center;

@@ -63,7 +63,7 @@
           </div>
 
           <div>
-            With <i class="fas fa-heart color-danger"></i> by <a class="color-success" href="https://nataliahonza.com" target="_blank">Natalia & Honza</a>
+            With <i class="fas fa-heart color-danger"></i> by <a class="color-success" href="https://www.nataliahonza.com" target="_blank">Natalia & Honza</a>
           </div>
         </div>
       </div>
@@ -108,7 +108,7 @@
         <div class="form-group form-group-full">
           <div class="form-control">
             <select v-model="nameSetIndex">
-              <option v-for="(nameSet, index) in nameSets" :value="index">{{ nameSet.name }}</option>
+              <option v-for="(nameSet, index) in nameSets" :value="index">{{ getSetDisplayName(nameSet) }}</option>
             </select>
           </div>
         </div>

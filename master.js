@@ -20,6 +20,11 @@ window.dvlt = {
       return Math.floor(number * 100) + '%';
     }
   },
+  dict: {
+    merge: function (d1, d2) {
+      return Object.assign({}, JSON.parse(JSON.stringify(d1)), JSON.parse(JSON.stringify(d2)));
+    },
+  },
   storage: {
     set: function (key, value, sync) {
       sync = sync || false;

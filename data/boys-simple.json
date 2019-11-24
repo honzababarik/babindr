@@ -1,11 +1,13 @@
-[
-  {
-    "name": "Liam"
-  },
-  {
-    "name": "Noah"
-  },
-  {
-    "name": "William"
-  }
-]
+{
+  "names": [
+    {
+      "name": "Liam"
+    },
+    {
+      "name": "Noah"
+    },
+    {
+      "name": "William"
+    }
+  ]
+}

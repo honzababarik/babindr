@@ -24,7 +24,7 @@
   };
 
   var createNewGame = function () {
-    return Object.assign({
+    return dvlt.dict.merge({
       id: dvlt.utils.uuid(),
       createdAt: dvlt.clock.now(),
     }, NEW_GAME_STATE);
@@ -43,8 +43,12 @@
       isSharingResults: false,
       currentTab: 0,
       nameSets: [
-        { url: '/data/boys-original.json', name: 'Boys - Original [1000 names]' },
-        { url: '/data/boys-simple.json', name: 'Boys - Original Simple [3 names]' },
+        { url: '/data/girls-original.json', name: 'Gigantic Set of Popular Girl Names', count: 1000 },
+        { url: '/data/boys-original.json', name: 'Gigantic Set of Popular Boy Names', count: 1000 },
+        { url: '/data/boys-100-popular-2018.json', name: 'Most Popular American Boy Names of 2018', count: 1000 },
+        { url: '/data/girls-100-popular-2018.json', name: 'Most Popular American Girl Names of 2018', count: 1000 },
+
+        { url: '/data/boys-simple.json', name: 'Boys - Testing Sample', count: 3 },
       ],
       nameSetIndex: null,
       game: null,
@@ -69,6 +73,7 @@
         this.savedGames = [];
         this.isDropdownOpened = false;
         this.areDetailsShown = false;
+        dvlt.utils.setPageHash('');
       },
       onClickStartGame: function () {
         this.game = createNewGame();
@@ -94,13 +99,16 @@
         }
 
         var nameSet = this.nameSets[this.nameSetIndex];
-        this.game.nameSet = nameSet.name;
+        this.game.nameSet = this.getSetDisplayName(nameSet);
         this.isLoading = true;
         dvlt.ajax.getJSON(nameSet.url, function (statusCode, response) {
-          app.game.words = response;
+          app.game.words = response.names;
           app.isLoading = false;
           app.startGame();
         });
+      },
+      getSetDisplayName: function (nameSet) {
+        return nameSet.name + ' [' + nameSet.count + ' names]';
       },
       onClickBackToMenu: function () {
         this.goToScreen(SCREEN_NAME_MENU);
