@@ -7,6 +7,7 @@
   var SCREEN_NAME_RESULTS = 'results';
   var TAB_INDEX_MATCHES = 0;
   var TAB_INDEX_BEST_MATCHES = 1;
+  var TAB_INDEX_LIKED = 2;
   var STORAGE_SAVE_GAME_PREFIX = 'game-';
   var NEW_GAME_STATE = {
     gender: null,
@@ -16,7 +17,6 @@
     currentPlayerIndex: 0,
     currentWordIndex: 0,
     currentWordStartedAt: 0,
-    currentEmoji: null,
     words: [],
     ratings: {},
     results: null,
@@ -33,6 +33,7 @@
     el: '#app',
     data: {
       currentScreen: SCREEN_NAME_MENU,
+      currentEmoji: null,
       isLoading: false,
       isHoldingUp: false,
       isHoldingDown: false,
@@ -88,9 +89,10 @@
           return;
         }
 
-        this.game.nameSet = this.nameSets[this.nameSetIndex];
+        var nameSet = this.nameSets[this.nameSetIndex];
+        this.game.nameSet = nameSet.name;
         this.isLoading = true;
-        dvlt.ajax.getJSON(this.game.nameSet.url, function (statusCode, response) {
+        dvlt.ajax.getJSON(nameSet.url, function (statusCode, response) {
           app.game.words = response;
           app.isLoading = false;
           app.startGame();
@@ -170,7 +172,7 @@
       nextWord: function (index) {
         var app = this;
         this.game.currentWordIndex = index;
-        this.game.currentEmoji = this.getCurrentEmoji();
+        this.currentEmoji = this.getCurrentEmoji();
         Vue.nextTick(function () {
           app.currentWordStartedAt = dvlt.clock.now();
         });
@@ -320,17 +322,39 @@
       getTotalWords: function (game) {
         return game.words.length;
       },
+      getLikers: function (wordIndex) {
+        var likers = [];
+        var ratings = this.game.ratings[wordIndex];
+        for (var i = 0; i < Object.keys(ratings).length; i++) {
+          var rating = ratings[i];
+          if (rating.score > 0) {
+            likers.push(this.game.players[i]);
+          }
+        }
+        return likers;
+      },
+      onClickShareResults: function () {
+        var game = JSON.stringify(this.game);
+        console.log(btoa(game).length);
+      }
     },
     computed: {
       sortedMatches: function () {
         var matches = [];
+        var scoreMinimum = this.game.players.length;
+        if (this.currentTab === TAB_INDEX_LIKED) {
+          // It doesnt have negative score, means that it had to be liked by 50% and more users
+          scoreMinimum = 0;
+        }
+
         for (var i = 0; i < Object.keys(this.game.results.words).length; i++) {
           var wordRating = this.game.results.words[i];
-          if (wordRating.score === this.game.players.length) {
+          if (wordRating.score >= scoreMinimum) {
             matches.push({
               word: this.game.words[i].name,
-              rating: wordRating.score,
+              score: wordRating.score,
               time: wordRating.totalTime,
+              likers: this.getLikers(i).join(', '),
             });
           }
         }
@@ -338,6 +362,12 @@
         if (this.currentTab === TAB_INDEX_BEST_MATCHES) {
           matches.sort(function (m1, m2) {
             return m1.time - m2.time;
+          });
+        }
+        else if (this.currentTab === TAB_INDEX_LIKED) {
+          matches.sort(function (m1, m2) {
+            var score = m2.score - m1.score;
+            return score === 0 ? m1.time - m2.time : score;
           });
         }
         return matches;

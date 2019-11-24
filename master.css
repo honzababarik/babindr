@@ -41,14 +41,6 @@ body {
   width: 100%;
 }
 
-.details {
-  font-weight: 600;
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-  text-align: center;
-  cursor: pointer;
-}
-
 *:focus {
   outline: none !important;
 }
@@ -58,6 +50,10 @@ body {
 .color-neutral { color: var(--neutral-color) !important; }
 .color-success { color: var(--success-color) !important; }
 .color-danger { color: var(--danger-color) !important; }
+.color-text-light { color: var(--text-light-color) !important; }
+
+.text-sm { font-size: 0.8rem; }
+.text-xs { font-size: 0.6rem; }
 
 [v-cloak] { display: none; }
 .justify-center { justify-content: center; }
@@ -181,7 +177,7 @@ table tr td {
   padding-top: 10px;
 }
 
-#app {
+#app, .screen {
   min-height: calc(100vh - var(--nav-height));
 }
 
@@ -211,6 +207,7 @@ table tr td {
   font-weight: 500;
   padding: 12px 40px;
   border-radius: 20px;
+  border: 2px solid var(--theme-color);
 }
 .btn-primary {
   color: white;
@@ -219,7 +216,6 @@ table tr td {
 .btn-default {
   color: var(--text-color);
   background-color: white;
-  border: 2px solid var(--theme-color);
 }
 .btn-sm {
   padding: 6px 20px;
@@ -462,6 +458,7 @@ table tr td {
   font-weight: bold;
   display: flex;
   align-items: center;
+  text-align: center;
   justify-content: center;
   flex: 1;
   height: 50px;

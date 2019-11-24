@@ -33,12 +33,12 @@
           v-bind:key="saveGame.id" v-for="(saveGame, index) in savedGames"
           @click="onClickSavedGame(saveGame)">
           <div class="text mb-1">{{ getGameName(saveGame) }}</div>
-          <div class="set mb-2">{{ saveGame.nameSet.name }}</div>
+          <div class="set mb-2">{{ saveGame.nameSet }}</div>
           <div class="d-flex items-center justify-between">
-            <div>
-              <span class="emoji">{{ saveGame.currentEmoji }}</span>
-              <span class="progress">{{ getGameProgress(saveGame) }}</span>
-            </div>
+            <span class="progress">
+              <i class="far fa-clock"></i>
+              {{ getGameProgress(saveGame) }}
+            </span>
             <a @click="onClickDeleteSaveGame(index, $event)">
               <i class="fas fa-trash"></i>
             </a>
@@ -141,7 +141,7 @@
             <div class="key">[Shortcut: Arrow Down]</div>
           </div>
           <div class="card">
-            <span class="emoji" v-html="game.currentEmoji"></span>
+            <span class="emoji" v-html="currentEmoji"></span>
             <div class="first-name">{{ currentName }}</div>
             <div class="last-name" v-if="game.lastName">{{ game.lastName }}</div>
           </div>
@@ -202,20 +202,28 @@
 
         <h1 class="total">Total Matches: {{ game.results.general.matches }}</h1>
 
-        <a class="details" @click="areDetailsShown = true" v-if="!areDetailsShown && game.results.general.matches > 0">
-          Show Details <i class="far fa-chevron-down"></i>
-        </a>
+        <div class="d-flex items-center justify-center mb-4">
+          <a class="btn btn-sm btn-primary mr-2" @click="onClickShareResults">
+            Share Results
+          </a>
+          <a class="btn btn-sm btn-primary ml-2" :class="{'btn-default': areDetailsShown}" @click="areDetailsShown = !areDetailsShown" v-if="game.results.general.matches > 0">
+            Show Details
+          </a>
+        </div>
+
 
         <div class="full-width" v-if="areDetailsShown">
           <div class="tabs">
             <div class="tab" :class="{'active': currentTab === 0}" @click="currentTab = 0">Matches</div>
             <div class="tab" :class="{'active': currentTab === 1}" @click="currentTab = 1">Quick Matches</div>
+            <div class="tab" :class="{'active': currentTab === 2}" @click="currentTab = 2">Liked</div>
           </div>
 
           <div class="matches">
             <div v-for="match in sortedMatches">
               {{ match.word }}
               <span v-if="game.lastName">{{ game.lastName }}</span>
+              <span v-if="currentTab === 2" class="color-text-light text-sm">[{{ match.likers }}]</span>
             </div>
           </div>
         </div>
