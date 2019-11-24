@@ -1,3 +1,5 @@
+
+
 window.dvlt = {
   data: {
     maleEmojis: ["👼", "🦸‍♂️", "🦹‍♂️", "👮‍♂️", "👷‍♂️", "💂‍♂️", "🕵️‍♂️", "👨‍⚕️", "👨‍🌾", "👨‍🍳", "👨‍🎓", "👨‍🎤", "👨‍🏫", "👨‍🏭", "👨‍💻", "👨‍💼", "👨‍🔧", "👨‍🔬", "👨‍🎨", "👨‍🚒", "👨‍✈️", "👨‍🚀", "👨‍⚖️", "🤵", "🤴", "🎅", "🧙‍♂️", "🧝‍♂️", "🧛‍♂️", "🧟‍♂️", "🧞‍♂️", "🧜‍♂️", "🧚‍♂️"],
@@ -8,16 +10,29 @@ window.dvlt = {
       return new Date().getTime();
     }
   },
+  redirect: {
+    url: function (url) {
+      window.location.href = url;
+    },
+  },
   formatter: {
     toPerc: function (number) {
       return Math.floor(number * 100) + '%';
     }
   },
   storage: {
-    set: function (key, value) {
+    set: function (key, value, sync) {
+      sync = sync || false;
+      if (sync) {
+        firebase.database().ref(key).set(value);
+      }
       return localStorage.setItem(key, JSON.stringify(value));
     },
-    delete: function (key) {
+    delete: function (key, sync) {
+      sync = sync || false;
+      if (sync) {
+        firebase.database().ref(key).remove();
+      }
       return localStorage.removeItem(key);
     },
     getAll: function (prefix) {
@@ -30,9 +45,19 @@ window.dvlt = {
       }
       return values;
     },
-    get: function (key) {
-      var item = localStorage.getItem(key);
-      return JSON.parse(item);
+    get: function (key, sync, callback) {
+      sync = sync || false;
+      if (sync && callback) {
+        firebase.database().ref(key).once('value', function (snapshot) {
+          var value = snapshot.val();
+          dvlt.storage.set(key, value, false);
+          callback(value);
+        });
+      }
+      else {
+        var item = localStorage.getItem(key);
+        return JSON.parse(item);
+      }
     }
   },
   notify: function (text, type, options) {
@@ -44,6 +69,15 @@ window.dvlt = {
     options = options || {};
     type = type || 'success';
     new Noty(Object.assign(defaultOptions, options)).show();
+  },
+  array: {
+    joinProps: function (arr, propName, separator) {
+      var items = [];
+      for (var i = 0; i < arr.length; i++) {
+        items.push(arr[i][propName]);
+      }
+      return items.join(separator);
+    },
   },
   utils: {
     random: function (maxNumber) {
@@ -61,6 +95,18 @@ window.dvlt = {
     },
     isMobile: function () {
       return window.innerWidth <= 768;
+    },
+    uuid: function () {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    },
+    getUrlParameter: function(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
   },
   string: {

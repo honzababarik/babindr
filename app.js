@@ -8,8 +8,9 @@
   var TAB_INDEX_MATCHES = 0;
   var TAB_INDEX_BEST_MATCHES = 1;
   var TAB_INDEX_LIKED = 2;
-  var STORAGE_SAVE_GAME_PREFIX = 'game-';
+  var STORAGE_SAVE_GAME_PREFIX = 'games/';
   var NEW_GAME_STATE = {
+    version: '1.0',
     gender: null,
     players: [],
     lastName: '',
@@ -24,7 +25,7 @@
 
   var createNewGame = function () {
     return Object.assign({
-      id: dvlt.utils.random(1000000),
+      id: dvlt.utils.uuid(),
       createdAt: dvlt.clock.now(),
     }, NEW_GAME_STATE);
   };
@@ -39,6 +40,7 @@
       isHoldingDown: false,
       isDropdownOpened: false,
       areDetailsShown: false,
+      isSharingResults: false,
       currentTab: 0,
       nameSets: [
         { url: '/data/boys-original.json', name: 'Boys - Original [1000 names]' },
@@ -73,7 +75,9 @@
         this.goToScreen(SCREEN_NAME_GAME_SETTINGS);
       },
       onClickAddPlayer: function () {
-        this.game.players.push(dvlt.string.randomName());
+        this.game.players.push({
+          name: dvlt.string.randomName()
+        });
       },
       onClickRemovePlayer: function (index) {
         this.game.players.splice(index, 1);
@@ -103,7 +107,7 @@
       },
       onClickSaveGame: function () {
         this.isDropdownOpened = false;
-        dvlt.storage.set(this.getGameStoreKey(this.game), this.game);
+        dvlt.storage.set(this.getGameStoreKey(this.game), this.game, true);
         dvlt.notify('Your game ' + this.game.id + ' was saved!', 'success')
         this.isDropdownOpened = false;
       },
@@ -126,6 +130,7 @@
           this.goToScreen(SCREEN_NAME_RESULTS);
         }
         else {
+          this.currentEmoji = this.getCurrentEmoji();
           this.goToScreen(SCREEN_NAME_GAME);
         }
       },
@@ -143,7 +148,7 @@
         if (confirm('Are you sure you want to delete this game?')) {
           var game = this.savedGames[index];
           this.savedGames.splice(index, 1);
-          dvlt.storage.delete(this.getGameStoreKey(game));
+          dvlt.storage.delete(this.getGameStoreKey(game), true);
           if (this.game && this.game.id === game.id) {
             this.game = null;
           };
@@ -292,7 +297,8 @@
       },
       getGameName: function (game) {
         var lastPlayerIndex = game.players.length - 1;
-        return game.players.slice(0, lastPlayerIndex).join(',') + ' and ' + game.players[lastPlayerIndex];
+        var players = game.players.slice(0, lastPlayerIndex);
+        return dvlt.array.joinProps(players, 'name', ', ') + ' and ' + game.players[lastPlayerIndex].name;
       },
       getCurrentEmoji: function () {
         if (this.game.gender === 'M') {
@@ -328,17 +334,24 @@
         for (var i = 0; i < Object.keys(ratings).length; i++) {
           var rating = ratings[i];
           if (rating.score > 0) {
-            likers.push(this.game.players[i]);
+            likers.push(this.game.players[i].name);
           }
         }
         return likers;
       },
-      onClickShareResults: function () {
-        var game = JSON.stringify(this.game);
-        console.log(btoa(game).length);
+      onClickShareGame: function () {
+        this.isSharingResults = !this.isSharingResults;
+        this.areDetailsShown = false;
+      },
+      onClickShowDetails: function () {
+        this.isSharingResults = false;
+        this.areDetailsShown = !this.areDetailsShown;
       }
     },
     computed: {
+      gameUrl: function () {
+        return 'https://babinder.com/game?id=' + this.game.id;
+      },
       sortedMatches: function () {
         var matches = [];
         var scoreMinimum = this.game.players.length;
@@ -382,7 +395,7 @@
         return 'width: ' + this.playerProgress + '%';
       },
       currentPlayerName: function () {
-        return this.game.players[this.game.currentPlayerIndex];
+        return this.game.players[this.game.currentPlayerIndex].name;
       },
       currentGameName: function () {
         return this.getGameName(this.game);
@@ -418,6 +431,15 @@
           }
         }
       });
+
+      var gameId = dvlt.utils.getUrlParameter('g');
+      if (gameId) {
+        var game = dvlt.storage.get(STORAGE_SAVE_GAME_PREFIX + gameId);
+        if (game) {
+          this.game = game;
+          this.onClickLoadGame();
+        }
+      }
     }
   });
 
