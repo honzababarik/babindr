@@ -37,6 +37,11 @@ body {
   margin-bottom: 40px;
 }
 
+.disclaimer {
+  padding-top: 50px;
+  font-size: 0.9rem;
+}
+
 .full-width {
   width: 100%;
 }
