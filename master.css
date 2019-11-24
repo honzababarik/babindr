@@ -178,7 +178,7 @@ table tr td {
 }
 
 #app, .screen {
-  min-height: calc(100vh - var(--nav-height));
+  min-height: calc(100vh - var(--nav-height) - 50px);
 }
 
 .screen {
@@ -193,6 +193,7 @@ table tr td {
   max-width: 100%;
   justify-content: space-between;
   height: calc(100vh - var(--nav-height) - 50px);
+  min-height: auto;
 }
 .screen-center {
   align-items: center;
@@ -227,6 +228,13 @@ table tr td {
 
 .form-group {
 
+}
+.form-group label {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  margin-bottom: 5px;
+  display: block;
+  color: var(--text-light-color);
 }
 .form-group-full {
   width: 100%;
@@ -466,6 +474,24 @@ table tr td {
 }
 .tab.active {
   border-bottom-color: var(--theme-color);
+}
+
+.or {
+  color: var(--text-light-color);
+  border-bottom: 2px dashed var(--text-light-color);
+  position: relative;
+  margin: 40px 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.or span {
+  display: inline-block;
+  position: absolute;
+  top: -8px;
+  background-color: var(--page-background-color);
+  width: 50px;
+  text-align: center;
 }
 
 @media only screen and (max-width: 768px) {

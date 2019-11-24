@@ -108,6 +108,14 @@ window.dvlt = {
       var results = regex.exec(location.search);
       return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
+    setPageHash: function (hash) {
+      window.location.href = '#' + hash;
+    },
+    getPageHash: function () {
+      if (window.location.hash) {
+        return decodeURIComponent(window.location.hash.substring(1));
+      }
+    },
   },
   string: {
     capitalize: function (word) {

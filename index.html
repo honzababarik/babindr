@@ -152,6 +152,15 @@
         <a class="btn btn-primary mt-8" @click="onClickPlayerReady">
           <i class="fas fa-play mr-2"></i> I'm Ready!
         </a>
+
+        <div class="or">OR</div>
+
+        <div class="form-group form-group-full mb-2">
+          <label>Send Game to {{ currentPlayerName }}</label>
+          <div class="form-control">
+            <input type="text" :value="gameUrl" readonly>
+          </div>
+        </div>
       </div>
 
       <div class="screen game-screen" v-if="currentScreen === 'game'">

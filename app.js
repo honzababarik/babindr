@@ -118,6 +118,7 @@
         }
       },
       startGame: function () {
+        dvlt.utils.setPageHash(this.game.id);
         this.goToScreen(SCREEN_NAME_GAME);
         this.nextWord(0);
       },
@@ -126,6 +127,7 @@
         this.goToScreen(SCREEN_NAME_LOAD_GAMES);
       },
       onClickLoadGame: function () {
+        dvlt.utils.setPageHash(this.game.id);
         if (this.isGameCompleted(this.game)) {
           this.goToScreen(SCREEN_NAME_RESULTS);
         }
@@ -186,6 +188,7 @@
         this.game.currentPlayerIndex++;
         this.nextWord(0);
         this.goToScreen(SCREEN_NAME_PLAYER_READY);
+        this.onClickSaveGame();
       },
       onRateWord: function (rating) {
         this.rateCurrentWord(rating);
@@ -313,7 +316,6 @@
         return STORAGE_SAVE_GAME_PREFIX + game.id;
       },
       getGameProgress: function (game) {
-        // TODO on navigation, push states
         var totalGameWords = this.getTotalWords(game);
         var totalWords = game.players.length * totalGameWords;
         var currentWords = (game.currentWordIndex + 1) + (game.currentPlayerIndex * totalGameWords);
@@ -432,7 +434,7 @@
         }
       });
 
-      var gameId = dvlt.utils.getUrlParameter('g');
+      var gameId = dvlt.utils.getPageHash();
       if (gameId) {
         var game = dvlt.storage.get(STORAGE_SAVE_GAME_PREFIX + gameId);
         if (game) {

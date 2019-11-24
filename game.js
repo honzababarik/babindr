@@ -11,7 +11,7 @@
         var app = this;
         dvlt.storage.get(STORAGE_SAVE_GAME_PREFIX + this.gameId, true, function (game) {
           if (game) {
-            dvlt.redirect.url('/?g=' + app.gameId);
+            dvlt.redirect.url('/#' + app.gameId);
           }
           else {
             dvlt.redirect.url('/');
