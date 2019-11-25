@@ -517,7 +517,7 @@ table tr td {
     font-size: 0.9rem;
   }
   #app, .screen {
-    min-height: calc(100vh - var(--nav-mobile-height) - 40px);
+    min-height: calc(100vh - var(--nav-mobile-height) - 25px);
     max-width: 100%;
   }
   .play-header {
@@ -545,6 +545,6 @@ table tr td {
     margin-bottom: 20px;
   }
   .progress {
-    margin-bottom: 20px;
+    padding-bottom: 20px;
   }
 }
