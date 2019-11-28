@@ -527,6 +527,7 @@ table tr td {
     -ms-box-sizing:     border-box;
     -o-box-sizing:      border-box;
     box-sizing:         border-box;
+    min-height: -webkit-fill-available;
   }
   .screen {
     padding-top: calc(var(--nav-mobile-height) + 20px);
