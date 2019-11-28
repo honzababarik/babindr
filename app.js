@@ -176,11 +176,13 @@
       onClickSelectGender: function (gender) {
         this.game.gender = gender;
       },
-      onClickRateUp: function () {
+      onClickRateUp: function (e) {
+        e.stopPropagation();
         this.onRateWord(1);
         this.isHoldingUp = false;
       },
-      onClickRateDown: function () {
+      onClickRateDown: function (e) {
+        e.stopPropagation();
         this.onRateWord(-1);
         this.isHoldingDown = false;
       },
@@ -447,7 +449,7 @@
     beforeDestroy: function () {
       document.removeEventListener('keyup', this.onDocumentKeyUp);
       document.removeEventListener('keydown', this.onDocumentKeyDown);
-      document.removeEventListener('click', this.onDocumentBodyClick);
+      document.body.removeEventListener('click', this.onDocumentBodyClick);
     },
     mounted: function () {
       document.addEventListener('keyup', this.onDocumentKeyUp);
