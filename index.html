@@ -176,7 +176,7 @@
       <div class="screen game-screen" v-if="currentScreen === 'game'">
         <div class="play-header d-flex items-center justify-between">
           <h3>Player: {{ currentPlayerName }}</h3>
-          <div class="dropdown" :class="{'active': isDropdownOpened}">
+          <div class="dropdown" :class="{'active': isDropdownOpened}" ref="dropdown">
             <button @click="isDropdownOpened = !isDropdownOpened"><i class="far fa-ellipsis-v"></i></button>
             <div class="dropdown-menu">
               <a @click="onClickSkipRest">Skip Rest</a>

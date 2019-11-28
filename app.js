@@ -356,7 +356,34 @@
       onClickShowDetails: function () {
         this.isSharingResults = false;
         this.areDetailsShown = !this.areDetailsShown;
-      }
+      },
+      onDocumentKeyUp: function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (this.isGameInProgress) {
+          if (keyCode === 38) {
+            this.onClickRateUp();
+          }
+          else if (keyCode === 40) {
+            this.onClickRateDown();
+          }
+        }
+      },
+      onDocumentKeyDown: function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (this.isGameInProgress) {
+          if (keyCode === 38) {
+            this.isHoldingUp = true;
+          }
+          else if (keyCode === 40) {
+            this.isHoldingDown = true;
+          }
+        }
+      },
+      onDocumentBodyClick: function (e) {
+        if (this.isDropdownOpened && !this.$refs.dropdown.contains(e.target)) {
+          this.isDropdownOpened = false;
+        }
+      },
     },
     computed: {
       gameUrl: function () {
@@ -417,30 +444,15 @@
         return this.game && this.currentScreen === SCREEN_NAME_GAME;
       },
     },
+    beforeDestroy: function () {
+      document.removeEventListener('keyup', this.onDocumentKeyUp);
+      document.removeEventListener('keydown', this.onDocumentKeyDown);
+      document.removeEventListener('click', this.onDocumentBodyClick);
+    },
     mounted: function () {
-      var app = this;
-      document.addEventListener('keyup', function (e) {
-        var keyCode = e.keyCode || e.which;
-        if (app.isGameInProgress) {
-          if (keyCode === 38) {
-            app.onClickRateUp();
-          }
-          else if (keyCode === 40) {
-            app.onClickRateDown();
-          }
-        }
-      });
-      document.addEventListener('keydown', function (e) {
-        var keyCode = e.keyCode || e.which;
-        if (app.isGameInProgress) {
-          if (keyCode === 38) {
-            app.isHoldingUp = true;
-          }
-          else if (keyCode === 40) {
-            app.isHoldingDown = true;
-          }
-        }
-      });
+      document.addEventListener('keyup', this.onDocumentKeyUp);
+      document.addEventListener('keydown', this.onDocumentKeyDown);
+      document.body.addEventListener('click', this.onDocumentBodyClick);
 
       var gameId = dvlt.utils.getPageHash();
       if (gameId) {

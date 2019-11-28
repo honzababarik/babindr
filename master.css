@@ -508,7 +508,10 @@ table tr td {
     height: var(--nav-mobile-height);
     background-color: white;
     border-bottom: 2px solid var(--border-color);
-    margin-bottom: 20px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 1;
   }
   h1 {
     font-size: 2rem;
@@ -516,9 +519,17 @@ table tr td {
   h3 {
     font-size: 0.9rem;
   }
-  #app, .screen {
-    min-height: calc(100vh - var(--nav-mobile-height) - 25px);
+  #app, .screen, .game-screen {
+    min-height: 100vh;
     max-width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing:    border-box;
+    -ms-box-sizing:     border-box;
+    -o-box-sizing:      border-box;
+    box-sizing:         border-box;
+  }
+  .screen {
+    padding-top: calc(var(--nav-mobile-height) + 20px);
   }
   .play-header {
     padding: 10px;
