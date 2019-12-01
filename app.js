@@ -45,8 +45,8 @@
       nameSets: [
         { url: '/data/girls-original.json', name: 'Gigantic Set of Popular Girl Names', count: 1000 },
         { url: '/data/boys-original.json', name: 'Gigantic Set of Popular Boy Names', count: 1000 },
-        { url: '/data/boys-100-popular-2018.json', name: 'Most Popular American Boy Names of 2018', count: 1000 },
-        { url: '/data/girls-100-popular-2018.json', name: 'Most Popular American Girl Names of 2018', count: 1000 },
+        { url: '/data/boys-100-popular-2018.json', name: 'Most Popular American Boy Names of 2018', count: 100 },
+        { url: '/data/girls-100-popular-2018.json', name: 'Most Popular American Girl Names of 2018', count: 100 },
 
         { url: '/data/boys-simple.json', name: 'Boys - Testing Sample', count: 3 },
       ],
