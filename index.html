@@ -80,7 +80,7 @@
           <div class="set mb-2">{{ saveGame.nameSet }}</div>
           <div class="d-flex items-center justify-between">
             <span class="progress">
-              <i class="far fa-clock"></i>
+              <i class="fas fa-clock"></i>
               {{ getGameProgress(saveGame) }}
             </span>
             <a @click="onClickDeleteSaveGame(index, $event)">
@@ -122,7 +122,7 @@
           </div>
         </div>
         <a class="btn btn-primary btn-sm" @click="onClickAddPlayer">
-          <i class="far fa-plus mr-2"></i> Add Player
+          <i class="fas fa-plus mr-2"></i> Add Player
         </a>
         <hr>
 
@@ -177,7 +177,7 @@
         <div class="play-header d-flex items-center justify-between">
           <h3>Player: {{ currentPlayerName }}</h3>
           <div class="dropdown" :class="{'active': isDropdownOpened}" ref="dropdown">
-            <button @click="isDropdownOpened = !isDropdownOpened"><i class="far fa-ellipsis-v"></i></button>
+            <button @click="isDropdownOpened = !isDropdownOpened"><i class="fas fa-ellipsis-v"></i></button>
             <div class="dropdown-menu">
               <a @click="onClickSkipRest">Skip Rest</a>
               <a @click="onClickSaveGame">Save Game</a>
@@ -189,7 +189,7 @@
         <div class="play-area">
 
           <div class="play play-down" :class="{'active': isHoldingDown}" @click="onClickRateDown">
-            <i class="fal fa-thumbs-down"></i>
+            <i class="fas fa-thumbs-down"></i>
             <div class="text">Meh</div>
             <div class="key">[Shortcut: Arrow Down]</div>
           </div>
@@ -199,17 +199,17 @@
             <div class="last-name" v-if="game.lastName">{{ game.lastName }}</div>
           </div>
           <div class="play play-up" :class="{'active': isHoldingUp}" @click="onClickRateUp">
-            <i class="fal fa-thumbs-up"></i>
+            <i class="fas fa-thumbs-up"></i>
             <div class="text">Awesome!</div>
             <div class="key">[Shortcut: Arrow Up]</div>
           </div>
 
           <div class="play-mobile">
             <div class="play-down" :class="{'active': isHoldingDown}" @click="onClickRateDown">
-              <i class="fal fa-thumbs-down"></i>
+              <i class="fas fa-thumbs-down"></i>
             </div>
             <div class="play-up" :class="{'active': isHoldingUp}" @click="onClickRateUp">
-              <i class="fal fa-thumbs-up"></i>
+              <i class="fas fa-thumbs-up"></i>
             </div>
           </div>
         </div>
