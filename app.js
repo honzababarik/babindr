@@ -399,15 +399,17 @@
           scoreMinimum = 0;
         }
 
-        for (var i = 0; i < Object.keys(this.game.results.words).length; i++) {
-          var wordRating = this.game.results.words[i];
-          if (wordRating.score >= scoreMinimum) {
-            matches.push({
-              word: this.game.words[i].name,
-              score: wordRating.score,
-              time: wordRating.totalTime,
-              likers: this.getLikers(i).join(', '),
-            });
+        if (this.game.results) {
+          for (var i = 0; i < Object.keys(this.game.results.words).length; i++) {
+            var wordRating = this.game.results.words[i];
+            if (wordRating.score >= scoreMinimum) {
+              matches.push({
+                word: this.game.words[i].name,
+                score: wordRating.score,
+                time: wordRating.totalTime,
+                likers: this.getLikers(i).join(', '),
+              });
+            }
           }
         }
 
